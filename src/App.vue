@@ -2,6 +2,10 @@
   <div >
     <Headerss />
     <Home/>
+    <Howitworks/>
+    <Tips/>
+    <Testimonials/>
+    <Footer/>
 
 </div>
 </template>
@@ -12,10 +16,18 @@
 // import { defineComponent } from '@vue/composition-api'
 import Headerss from './components/Headerss.vue'
 import Home from './views/Home.vue'
+import Howitworks from './views/Howitworks.vue'
+import Tips from './views/Tips.vue'
+import Testimonials from './views/Testimonials.vue'
+import Footer from './components/Footer.vue'
+
+
+
+
 
 
 export default {
-  components: { Headerss,Home }
+  components: { Headerss,Home,Howitworks,Tips,Testimonials,Footer }
 }
   
 </script>
