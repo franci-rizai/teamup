@@ -1,17 +1,31 @@
 <template>
+<div>
     <div class="template">
-        <img src="../assets/col.webp" alt="photo of people collaborating">
+        <img src="@/assets/col.webp" alt="photo of people collaborating">
         <div class="text">
             <h1>Find Your Perfect Project Partner</h1>
             <h2>TeamUp connects individuals with shared interests and skills, making it easy to find collaborators for any project</h2>
             <button>Get Started</button>
         </div>
+    </div>
+        <Howitworks/>
+        <Tips/>
+        <Testimonials/>
+
+
 
     </div>
 </template>
 
 <script>
+
+
+import Howitworks from '@/views/Howitworks.vue'
+import Tips from '@/views/Tips.vue'
+import Testimonials from '@/views/Testimonials.vue'
+
 export default {
+    components: {Howitworks,Tips,Testimonials}
 
 }
 </script>

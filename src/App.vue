@@ -1,24 +1,20 @@
 <template>
-  <div >
+  <div id="app">
     <Headerss />
-    <Home/>
-    <Howitworks/>
-    <Tips/>
-    <Testimonials/>
-    <Footer/>
-
-</div>
+    <div class="content">
+      <router-view />
+    </div>
+    
+  </div>
 </template>
+
 
 
 
 <script>
 // import { defineComponent } from '@vue/composition-api'
 import Headerss from './components/Headerss.vue'
-import Home from './views/Home.vue'
-import Howitworks from './views/Howitworks.vue'
-import Tips from './views/Tips.vue'
-import Testimonials from './views/Testimonials.vue'
+
 import Footer from './components/Footer.vue'
 
 
@@ -27,7 +23,7 @@ import Footer from './components/Footer.vue'
 
 
 export default {
-  components: { Headerss,Home,Howitworks,Tips,Testimonials,Footer }
+  components: { Headerss,Footer}
 }
   
 </script>
@@ -45,5 +41,7 @@ body{
   text-align: center;
   color: #2c3e50;
 }
+
+
 
 </style>

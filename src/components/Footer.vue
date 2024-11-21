@@ -39,8 +39,10 @@
   .footer {
     background-color: #333;
     color: #f9f9f9;
-    padding: 20px;
+   
     font-size: 14px;
+    
+    width: 100%;
   }
   
   .footer-content {
