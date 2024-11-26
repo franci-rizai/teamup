@@ -33,7 +33,7 @@ export default {
 <style scoped>
 img{
     width: 80%;
-    height: 83.5dvh;
+    height: 85.5dvh;
     object-fit: cover;
 }
 
@@ -45,12 +45,33 @@ img{
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #121212;
+    
+    background-image: url(../assets/backg_beige.avif);
+    background-position: center;
+    background-repeat: no-repeat;
+  background-size: cover;
+  
     justify-content: space-evenly;
-    color: white
+    color: black;
     
 }
 
+.text h1{
+    font-size: 2.5em;
+   color:white;
+    background-color: black;
+
+   padding: 5px;
+    margin-top: -15px;
+    
+
+}
+
+.text h2{
+    background-color:black;
+    color: beige;
+    padding: 10px;
+}
 button{
     background-color: aliceblue;
     border: none;

@@ -61,15 +61,17 @@ export default {
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid rgb(210, 209, 209);
+  background-color: beige;
   padding-bottom: 1em;
 }
 .header img {
-  width: 100px;
+  width: 170px;
 }
 
 .router{
   text-decoration: none;
-  color: black;
+  color:rgb(0, 0, 0);
+  
 }
 ul {
   list-style: none;
@@ -78,5 +80,37 @@ ul {
   justify-content: space-between;
   gap: 2em;
   padding-right: 5em;
+}
+
+
+ul li{
+ 
+  font-family: arial;
+  font-size: 18px;
+  padding: 10px;
+  
+  
+}
+
+ul li:hover{
+  background-color: rgb(167, 240, 167);
+  
+  border-radius: 10px;
+  
+
+}
+
+button{
+background-color: white;
+border: none;
+border-radius: 5px;
+font-size: 20px;
+color:rgb(125, 235, 125);
+font-weight: bold;
+font-style: italic;
+padding: 10px;
+
+cursor: pointer;
+  
 }
 </style>
