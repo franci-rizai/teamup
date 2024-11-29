@@ -60,6 +60,7 @@ AddRequirement(e) {
                 description: this.description,
                 category: this.category,
                 tags: this.tags,
+                owner: localStorage.getItem("authToken"),
                 requirements: this.requirements
             })
 

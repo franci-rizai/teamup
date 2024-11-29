@@ -29,7 +29,7 @@
   
     
   
-     
+      <button @click="applyButton()" class="sub" type="submit">APPLY</button>
     </div>
   
     <div v-else>
@@ -60,11 +60,35 @@
           console.error("Error fetching project:", error);
         }
       },
+      async applyButton() {
+    try {
+        const response = await axios.put(`http://localhost:3001/Project/${this.id}`, {
+            collaborator: localStorage.getItem("authToken"), // Add collaborator
+        });
+
+        // Handle success (e.g., notify the user or update the UI)
+        console.log("Collaborator added successfully:", response.data);
+        alert("You have successfully applied to the project!");
+    } catch (error) {
+        // Handle errors (e.g., notify the user)
+        console.error("Error applying to the project:", error);
+        alert("There was an issue applying to the project. Please try again.");
+    }
+}
+
     },
   };
   </script>
   
   <style scoped>
+  .sub{
+    font-size: 20px;
+    color: green;
+    background-color: white;
+    width: 100px;
+    cursor: pointer;
+    padding: 5px;
+  }
   .project-details {
     max-width: 800px;
     margin: 0 auto;

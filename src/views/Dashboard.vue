@@ -117,6 +117,7 @@ data(){
     justify-content: center;
     align-items: center;
     width: 100%;
+  
     
     padding: 30px;
     

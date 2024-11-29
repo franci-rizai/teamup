@@ -176,8 +176,9 @@ app.post("/signup", async (req, res) => {
       enum: ["Active", "Completed", "Archived"], 
       default: "Active" 
     },
-    owner: [{type: String}],
+    owner: {type: String},
     requirements: [{ type: String }], // Example: ["JavaScript", "Teamwork"]
+    collaborators: [{ type: String }], // Array of collaborators
   
   });
   
@@ -185,7 +186,7 @@ app.post("/signup", async (req, res) => {
   
 // Route to create a project
 app.post("/CreateProject", async (req, res) => {
-  const { title, description, category, tags, requirements } = req.body;
+  const { title, description, category, tags,owner,requirements } = req.body;
 
   try {
     const newProject = new ProjectModel({
@@ -193,6 +194,7 @@ app.post("/CreateProject", async (req, res) => {
       description,
       category,
       tags,
+      owner,
       requirements,
     });
     await newProject.save();
@@ -228,6 +230,28 @@ app.get("/getProject/:id", async (req, res) => {
     res.status(500).json({ message: "Error fetching project" });
   }
 });
+
+app.put("/Project/:id", async (req, res) => {
+  const { id } = req.params;
+  const { collaborator } = req.body;
+
+  try {
+      const updatedProject = await ProjectModel.findByIdAndUpdate(
+          id,
+          { $push: { collaborators: collaborator } },
+          { new: true }
+      );
+
+      if (!updatedProject) {
+          return res.status(404).json({ message: 'Project not found' });
+      }
+
+      res.status(200).json({ message: 'Collaborator added successfully', updatedProject });
+  } catch (error) {
+      res.status(500).json({ message: 'Error updating project', error });
+  }
+});
+
 
 
 

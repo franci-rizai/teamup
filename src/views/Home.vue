@@ -1,7 +1,6 @@
 <template>
 <div>
     <div class="template">
-        <img src="@/assets/col.webp" alt="photo of people collaborating">
         <div class="text">
             <h1>Find Your Perfect Project Partner</h1>
             <h2>TeamUp connects individuals with shared interests and skills, making it easy to find collaborators for any project</h2>
@@ -36,50 +35,58 @@ img{
     height: 85.5dvh;
     object-fit: cover;
 }
-
-.template{
-    display: flex;
-    
-}
-.text{
+.text {
     display: flex;
     flex-direction: column;
     align-items: center;
-    
-    background-image: url(../assets/backg_beige.avif);
-    background-position: center;
-    background-repeat: no-repeat;
-  background-size: cover;
-  
+    height: 85vh;
+    background: linear-gradient(to bottom, #f8f0e3, #e9dcc6);
     justify-content: space-evenly;
     color: black;
+    position: relative;
+    padding: 20px;
+    border-radius: 0 0 100px 100px; /* Curve only the bottom corners */
+    transform: translateY(-20px); /* Move it slightly up */
+}
+
+.text h1 {
+    font-size: 3em;
+    color: rgb(52, 230, 111);
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.text h2 {
+    background-color: rgb(255, 255, 255,0.5);
+    color: rgb(105, 105, 82);
     
+    padding: 10px 20px;
+    border-radius: 40px;
+    text-align: center;
+    font-size: 1.5em;
+    line-height: 1.4;
+    max-width: 70%;
 }
 
-.text h1{
-    font-size: 2.5em;
-   color:white;
-    background-color: black;
-
-   padding: 5px;
-    margin-top: -15px;
-    
-
-}
-
-.text h2{
-    background-color:black;
-    color: beige;
-    padding: 10px;
-}
-button{
-    background-color: aliceblue;
+button {
+    background: linear-gradient(to right, #adebad, #52c752);
     border: none;
-    padding: 0.5em;
-    font-size: 25px;
-   border-radius: 10px;
-   cursor: pointer;
-
+    color: white;
+    padding: 0.8em 1.5em;
+    font-size: 1.2em;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    
 }
+
+button:hover {
+    background: linear-gradient(to right, #52c752, #adebad);
+    transform: scale(1.05);
+   
+}
+
+
 
 </style>

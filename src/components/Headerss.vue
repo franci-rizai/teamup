@@ -10,6 +10,7 @@
     <li><router-link class="router" to="/Profile">Profile</router-link></li>  
      
       <li><router-link class="router" to="/CreateProject">Create Project</router-link></li>
+     <li  v-if="!isLoggedIn" ><button>Sign up</button></li>
       <li>
         <button @click="handleButtonClick">{{ SituationLog }}</button>
       </li>
@@ -53,7 +54,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .header {
   padding-left: 5em;
   margin: auto;
