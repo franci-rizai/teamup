@@ -1,231 +1,208 @@
 <template>
-    <div>
-      <h1>It's time to edit your profile</h1>
-      <h2>So you get more chances</h2>
-      <form @submit.prevent="saveProfile" class="userData">
-        <!-- Personal Details -->
-        <h2>Personal Details</h2>
-        <div class="PersonalDetails">
-          <div>
-            <label for="fullName"><strong>Full Name:</strong></label>
-            <input v-model="profile.fullName" id="fullName" type="text" placeholder="Enter your full name" required />
-  
-            <label for="dob"><strong>Date of Birth:</strong></label>
-            <input v-model="profile.dob" id="dob" type="date" required />
-          </div>
-          <div>
-            <label for="gender"><strong>Gender:</strong></label>
-            <select v-model="profile.gender" id="gender" required>
-              <option value="" disabled>Select your gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
-            </select>
-  
-            <label for="about"><strong>Tell us about yourself:</strong></label>
-            <textarea
-              v-model="profile.about"
-              id="about"
-              rows="4"
-              placeholder="Write a short bio about yourself"
-              required
-            ></textarea>
-          </div>
+    <div class="template">
+
+        <div class="left-side">
+            <div class="profile">
+                <img src="../assets/avatar.png">
+                <h2>John Doe</h2>
+                <p>Full Stack Developer</p>
+                <p>Bay Area, San Fransisco, CA</p>
+                
+                <button>
+                    Message
+                </button>
+            </div>
+            <div class="links">
+                <div>
+                    <p>&nbsp; 1. Website</p>
+                    <p>Franciwebdev.site &nbsp; </p>
+                </div>
+                <div>
+                    <p>&nbsp; 2. Github</p>
+                    <p>Github.site &nbsp;</p>
+                </div>
+                <div>
+                    <p>&nbsp; 3. Linkedin</p>
+                    <p>Linkedin.site &nbsp;</p>
+                </div>
+
+            </div>
         </div>
-  
-        <!-- Contact Information -->
-        <h2>Contact Information</h2>
-        <div class="ContactInfo">
-          <div>
-            <label for="email"><strong>Email:</strong></label>
-            <input v-model="profile.email" id="email" type="email" placeholder="Enter your email" required />
-  
-            <label for="phone"><strong>Phone Number:</strong></label>
-            <input v-model="profile.phone" id="phone" type="tel" placeholder="Enter your phone number" required />
-          </div>
-          <div>
-            <label for="address"><strong>Address (City, Country):</strong></label>
-            <input
-              v-model="profile.address"
-              id="address"
-              type="text"
-              placeholder="Enter your city and country"
-              required
-            />
-          </div>
+
+        <div class="right-side">
+            <div class="personal-info">
+                <div>
+                    <h2>Full Name</h2>
+                    <p> John Doe </p>
+                </div>
+                <div>
+                    <h2>Email</h2>
+                    <p> John@gmail.com</p>
+                </div>
+                <div>
+                    <h2>Date of Birth</h2>
+                    <p> 16th of september 2002 </p>
+                </div>
+                <div>
+                    <h2>Gender</h2>
+                    <p> Male </p>
+                </div>
+
+            </div>
+
+            <div class="project-skills">
+                <div class="desc">
+                    <h1>Self intoduction</h1>
+                    <p>
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro, ratione dolorum! Expedita, quia enim sed, maxime magnam porro velit totam cum maiores quas optio aliquam hic aliquid nobis nihil dolores?
+                    </p>
+
+                </div>
+                <div class="skills">
+                    <h1>Top Skills</h1>
+                    <p>Web desing</p>
+                    <p>Web desing</p>
+                    <p>Web desing</p>
+                    <p>Web desing</p>
+                </div>
+            </div>
         </div>
-  
-        <!-- Professional Details -->
-        <h2>Professional Details</h2>
-        <div class="ProfessionalDetails">
-          <div>
-            <label for="skills"><strong>Skills/Expertise:</strong></label>
-            <input
-              v-model="profile.skills"
-              id="skills"
-              type="text"
-              placeholder="E.g., Web Development, Graphic Design"
-              required
-            />
-  
-            <label for="education"><strong>Education:</strong></label>
-            <input v-model="profile.education" id="education" type="text" placeholder="Enter your education" required />
-          </div>
-          <div>
-            <label for="experience"><strong>Work Experience:</strong></label>
-            <textarea
-              v-model="profile.experience"
-              id="experience"
-              rows="4"
-              placeholder="Describe your past work experiences"
-              required
-            ></textarea>
-  
-            <label for="portfolio"><strong>Portfolio Links:</strong></label>
-            <input
-              v-model="profile.portfolio"
-              id="portfolio"
-              type="url"
-              placeholder="Link to your portfolio or website"
-            />
-          </div>
-        </div>
-  
-        <button type="submit" class="save-button">Save Profile</button>
-        <p v-if="message" :class="{'success': success, 'error': !success}">{{ message }}</p>
-      </form>
+
     </div>
-  </template>
   
-  <script>
-  import axios from 'axios';
-  
-  export default {
-    data() {
-      return {
-        profile: {
-            username:"",
-          fullName: "",
-          dob: "",
-          gender: "",
-          about: "",
-          
-          phone: "",
-          address: "",
-          skills: "",
-          education: "",
-          experience: "",
-          portfolio: "",
-          lastname:"",
-        },
-        message: "", // Message for success or error feedback
-        success: false, // Determines the message type
-      };
-    },
-    mounted(){
-        this.profile.username = localStorage.getItem('authToken');
-       
-    },
-    methods: {
+</template>
+
+<script>
+export default {
+
+}
+</script>
+
+<style scoped>
+.project-skills{
+    display: flex;
+    margin-top: 1em;
+    gap: 1em;
+    justify-content: space-between;
+    align-items: center;
+}
+.desc{
+    background-color: white;
+    width: 50%;
+    aspect-ratio: 16/8;
+}
+
+.skills{
+    background-color: white;
+    width: 50%;
+    aspect-ratio: 16/8;
+}
+.left-side{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+img{
+    width: 140px;
+    border-radius: 100%;
+    margin-top: 15px;
+
+}
+
+.template{
+    margin-top: 2em;
+    display: flex;
+    justify-content: space-around;
+    align-items: start;
     
-      async saveProfile() {
-        try {
-          const response = await axios.post("http://localhost:3001/userInfo", {
-            username: this.profile.username, // Replace with dynamic username if needed
-            fullName: this.profile.fullName,
-    dob: this.profile.dob,
-    gender: this.profile.gender,
-    about: this.profile.about,
-    email: this.profile.email,
-    phone: this.profile.phone,
-    address: this.profile.address,
-    skills: this.profile.skills,
-    education: this.profile.education,
-    experience: this.profile.experience,
-    portfolio: this.profile.portfolio,
-          });
-  
-          if (response.status === 200) {
-            this.message = "Profile updated successfully!";
-            this.success = true;
-          } else {
-            this.message = "Failed to update profile.";
-            this.success = false;
-          }
-        } catch (error) {
-          this.message = "An error occurred while updating the profile.";
-          this.success = false;
-          console.error("Error:", error);
-        }
-      },
-     
-    },
-  };
-  </script>
-  
-  <style scoped>
-  /* General Styling */
-  .userData {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  h1,
-  h2 {
-    text-align: center;
-    color: #007bff;
-  }
-  
-  label {
-    display: block;
+}
+
+.profile p{
+    color: gray;
+    margin: 7px;
+}
+
+.profile button{
+margin:auto;
+background: beige;
+border: none ;
+padding: 10px;
+font-size: 20px;
+color: rgb(97, 165, 97);
+letter-spacing: 1px;
+}
+
+.profile{
+background: white;
+display: flex;
+flex-direction: column;
+align-items: center;
+width: 350px;
+aspect-ratio: 16/17;
+text-align: center;
+
+box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+
+.links{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: white;
     margin-top: 10px;
-    font-weight: bold;
-    color: #333;
-  }
-  
-  input,
-  select,
-  textarea {
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    width:350px;
+   
+}
+.links div{
+    
+display: flex;
+display: flex;
+    justify-content: space-between
+    ;
     width: 100%;
-    padding: 10px;
-    margin: 5px 0 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-  }
+   height: 45px;
+   font-size: 18px;
   
-  textarea {
-    resize: none;
-  }
-  
-  .save-button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .save-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .success {
-    color: green;
-    text-align: center;
-  }
-  
-  .error {
-    color: red;
-    text-align: center;
-  }
-  </style>
-  
+   
+   font-family: 'Times New Roman', Times, serif;
+    align-items: center;
+    border-bottom: 1px solid gray;
+    
+}
+
+
+.personal-info{
+    display: flex;
+    flex-direction: column;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    background-color: white;
+    
+}
+
+.right-side{
+    
+    width:70%;
+    
+}
+.personal-info div{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 4rem;
+    
+    
+
+}
+.personal-info div p{
+    text-align: left;
+   
+    width: 70%;
+
+}
+
+
+</style>
