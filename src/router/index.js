@@ -6,7 +6,7 @@ import CreateProfile from '@/views/CreateProfile.vue'
 import Project from '@/views/Project.vue'
 import ProjectDetails from '@/views/ProjectDetails.vue'
 import CreateProject from '@/views/CreateProject.vue'
-import Dashboard from '@/views/Dashboard.vue'
+import Dashboard from '@/views/DashboardComp/Dashboard.vue'
 import Profile from '@/views/Profile.vue'
 
 

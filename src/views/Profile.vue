@@ -67,7 +67,7 @@
                 </div>
             </div>
         </div>
-
+        <router-link class="edit-profile" to="/CreateProfile">Edit Profile</router-link>
     </div>
   
 </template>
