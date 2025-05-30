@@ -24,7 +24,7 @@
   </div>
 </template>
 
-<script>
+<script >
 import HomeDash from '@/views/DashboardComp/HomeDash.vue'
 import ProjectDash from '@/views/DashboardComp/ProjectDash.vue';
 export default {
@@ -33,7 +33,7 @@ export default {
   },
 data(){
     return{
-        welcomePage: 'Home'
+        welcomePage: 'Projects'
     }
 }
 }
@@ -48,10 +48,11 @@ data(){
 }
 .template {
   display: flex;
-  flex-direction: row;
+ 
+  
   height: 100vh; /* Full viewport height */
-  width: 100%; /* Full width */
-  box-sizing: border-box;
+  width: 90%; /* Full width */
+ 
   margin: 0;
   padding: 0;
   flex: 1; /* Take up all remaining space */

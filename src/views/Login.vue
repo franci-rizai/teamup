@@ -23,30 +23,26 @@
     methods: {
       async login() {
         try {
+          console.log("Attempting login with:", this.username, this.password); // Log input data
+
           const response = await axios.post('http://localhost:3001/login', {
             username: this.username,
             password: this.password
           });
-          
-          // Assuming successful login: handle as needed, e.g., redirect or display success
-          if (response.data.message==="Login successful"){
-             this.errMessage = ""; // Clear any previous error messages
-             localStorage.setItem("authToken",this.username);
-            this.$router.push({name: 'Home'})
-          }
-         else {
-        this.errMessage = response.data.message; // Display any server message
-     
-      }
-          
-          // Here you could redirect the user or update the state
-          // e.g., this.$router.push('/home') if using Vue Router
-  
-        } catch (error) {
-          if (error.response && error.response.data && error.response.data.message) {
-            this.errMessage = error.response.data.message; // Show specific message
+
+          if (response.data.message === "Login successful") {
+            this.errMessage = "";
+            localStorage.setItem("authToken", this.username);
+            this.$router.push({ name: 'Home' });
           } else {
-            this.errMessage = "An unexpected error occurred"; // Generic message
+            this.errMessage = response.data.message;
+          }
+        } catch (error) {
+          console.error("Login error:", error);
+          if (error.response && error.response.data && error.response.data.message) {
+            this.errMessage = error.response.data.message;
+          } else {
+            this.errMessage = "An unexpected error occurred";
           }
         }
       }
@@ -109,6 +105,5 @@
     font-size: 14px;
   }
   </style>
-  
 
-  
+

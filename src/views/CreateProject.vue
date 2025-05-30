@@ -23,6 +23,7 @@ import axios from 'axios'
 export default {
     data(){
         return{
+          username: localStorage.getItem("username"),
             title:"",
             description:"",
             category:"",
@@ -30,6 +31,7 @@ export default {
             tempTag:"",
             requirements: [],
             TempRequirement:""
+
 
         }
     },
@@ -50,32 +52,26 @@ AddRequirement(e) {
         this.TempRequirement = '';
     }
 },
-       async CreateProj(){
+async CreateProj(){
+  try {
+    console.log(localStorage.getItem("authToken"));
+    const response = await axios.post('http://localhost:3001/CreateProject', {
+      title: this.title,
+      description: this.description,
+      category: this.category,
+      tags: this.tags,
+      requirements: this.requirements,
+      owner: localStorage.getItem("authToken")
+    });
 
-        try{
-
-            const response = await axios.post('http://localhost:3001/CreateProject',{
-
-                title: this.title,
-                description: this.description,
-                category: this.category,
-                tags: this.tags,
-                owner: localStorage.getItem("authToken"),
-                requirements: this.requirements
-            })
-
-            console.log('Project created:', response.data);
-            alert('Project created successfully!');
-
-        }catch(error){
-            console.log(response.data.message);
-        }
-
-
-        }
+    console.log('Project created:', response.data);
+    alert('Project created successfully!');
+  } catch(error) {
+    console.error("Error creating project:", error.response?.data?.message || error.message);
+  }
+}
 
     }
-
 }
 </script>
 

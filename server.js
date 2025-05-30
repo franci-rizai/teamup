@@ -3,190 +3,160 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 const app = express();
-
-// Enable CORS
+app.use(express.json());
 app.use(cors());
-app.use(express.json()); // Enables parsing JSON request bodies
 
-// Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/teamup')
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("MongoDB connection error:", err));
-
-  const userSchema = new mongoose.Schema({
-    username: { type: String, required: true, unique: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    fullName: { type: String },
-    dob: { type: String },
-    gender: { type: String },
-    about: { type: String },
-    phone: { type: String },
-    address: { type: String },
-    skills: { type: String },
-    education: { type: String },
-    experience: { type: String },
-    portfolio: { type: String },
-  });
-
-
-const UserModel = mongoose.model('User', userSchema);
-
-
-// Route to get all users
-app.get("/getUsers", (req, res) => {
-  UserModel.find({})
-    .then(users => res.json(users))
-    .catch(err => {
-      console.error("Error fetching users:", err);
-      res.status(500).send("Server error");
-    });
+// MongoDB Connection
+mongoose.connect("mongodb://127.0.0.1:27017/teamup", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 });
 
+// User Schema
+const userSchema = new mongoose.Schema({
+  username: { type: String, required: true, unique: true },
+  email: String,
+  password: String,
+  fullName: String,
+  bio: String,
+  skills: [String],
+  interests: [String],
+  appliedProjects: [{ type: mongoose.Schema.Types.ObjectId, ref: "Project" }],
+  inProgressProjects: [{ type: mongoose.Schema.Types.ObjectId, ref: "Project" }],
+});
+
+const UserModel = mongoose.model("User", userSchema);
+
+// Project Schema
+const projectSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  category: { type: String, required: true },
+  tags: [String],
+  status: {
+    type: String,
+    enum: ["Active", "Completed", "Archived"],
+    default: "Active",
+  },
+  owner: { type: String, required: true },
+
+  requirements: [String],
+  collaborators: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  othersApplied: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+});
+
+const ProjectModel = mongoose.model("Project", projectSchema);
+
+/* ------------------- ROUTES ------------------- */
+
+// Get all users
+app.get("/getUsers", async (req, res) => {
+  try {
+    const users = await UserModel.find({});
+    res.json(users);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
+
+// Update user info
 app.post("/userInfo", async (req, res) => {
-  const {
-    username, // Used to identify the user
-    fullName,
-    dob,
-    gender,
-    about,
-    phone,
-    address,
-    skills,
-    education,
-    experience,
-    portfolio
-  } = req.body;
+  const { username, ...updateFields } = req.body;
 
   try {
-    // Update the user profile based on username
     const updatedUser = await UserModel.findOneAndUpdate(
-      { username }, // Search by username
-      {
-        fullName,
-        dob,
-        gender,
-        about,
-        phone,
-        address,
-        skills,
-        education,
-        experience,
-        portfolio
-      }
-     
+      { username },
+      updateFields,
+      { new: true }
     );
 
-    res.status(200).json({
-      message: "User profile updated successfully!",
-      user: updatedUser
-    });
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ message: "Profile updated!", user: updatedUser });
   } catch (error) {
-    console.error("Error updating user profile:", error);
-    res.status(500).json({ message: "Failed to update user profile", error });
+    console.error("Update error:", error);
+    res.status(500).json({ message: "Failed to update user", error });
+  }
+});
+app.post("/withdraw", async (req, res) => {
+  const { username, projectId } = req.body;
+
+  if (!username || !projectId) {
+    return res.status(400).json({ message: "Missing username or projectId" });
+  }
+
+  try {
+    const user = await UserModel.findOne({ username });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Remove the project from appliedProjects
+    user.appliedProjects = user.appliedProjects.filter(
+      (id) => id.toString() !== projectId
+    );
+
+    await user.save();
+
+    res.status(200).json({ message: "Withdrawn successfully" });
+  } catch (err) {
+    console.error("Error withdrawing application:", err);
+    res.status(500).json({ message: "Server error while withdrawing" });
   }
 });
 
 
-// Login route
-// Login route
+ 
+
+// Login
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
   try {
-      const user = await UserModel.findOne({ username });
-      if (!user || password !== user.password) {
-        return res.status(200).json({ message: "Wrong Username Or Password" });
+    const user = await UserModel.findOne({ username });
 
-      }
-      
-      
-        return res.status(200).json(
-          {
-            message:"Login successful"
-
-          }
-        )
-      
-     
-      
-      
-  } catch (error) {
-      console.error("Error during login:", error); // Log full error
-      res.status(500).json({ message: "Server error: " + error.message });
-  }
-});
-
-// Route to fetch a single project by ID
-app.get("/getProject/:id", async (req, res) => {
-  const { id } = req.params; // Extract the project ID from the route parameters
-  try {
-    const project = await ProjectModel.findById(id).populate("owner", "username email"); // Populate owner details
-    if (!project) {
-      return res.status(404).json({ message: "Project not found" }); // Handle case where project doesn't exist
+    if (!user || user.password !== password) {
+      return res.status(400).json({ message: "Wrong Username or Password" });
     }
-    res.status(200).json(project); // Return the project details
+
+    res.status(200).json({ message: "Login successful", user });
   } catch (error) {
-    console.error("Error fetching project:", error); // Log any errors
-    res.status(500).json({ message: "Error fetching project" }); // Return a server error message
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Server error", error });
   }
 });
 
-
-// Signup route with duplicate error handling
-// Signup route with duplicate error handling
+// Signup
 app.post("/signup", async (req, res) => {
-    const { username, email, password } = req.body;
-  
-    try {
-      // Check if the username or email already exists in the database
-      const existingUserByUsername = await UserModel.findOne({ username });
-      if (existingUserByUsername) {
-        return res.status(200).json({ message: "Username already exists" });
-      }
-  
-      const existingUserByEmail = await UserModel.findOne({ email });
-      if (existingUserByEmail) {
-        return res.status(200).json({ message: "Email already exists" });
-      }
-  
-      // If no duplicates, create a new user
-      const newUser = new UserModel({ username, email, password });
-      await newUser.save();
-      res.status(200).json({ message: "Signup successful" });
-  
-    } catch (error) {
-      console.error("Error during signup:", error); // Log the error
-      res.status(500).json({ message: "An unexpected error occurred" });
+  const { username, email, password } = req.body;
+
+  try {
+    if (await UserModel.findOne({ username })) {
+      return res.status(400).json({ message: "Username already exists" });
     }
-  });
-  
-  // For projects
 
+    if (await UserModel.findOne({ email })) {
+      return res.status(400).json({ message: "Email already exists" });
+    }
 
+    const newUser = new UserModel({ username, email, password });
+    await newUser.save();
 
- 
-  const ProjectSchema = new mongoose.Schema({
-    title: { type: String, required: true },
-    description: { type: String, required: true },
-    category: { type: String, required: true }, // Example: "Web Development"
-    tags: [{ type: String }], // Example: ["React", "Teamwork"]
-    status: { 
-      type: String, 
-      enum: ["Active", "Completed", "Archived"], 
-      default: "Active" 
-    },
-    owner: {type: String},
-    requirements: [{ type: String }], // Example: ["JavaScript", "Teamwork"]
-    collaborators: [{ type: String }], // Array of collaborators
-  
-  });
-  
-  const ProjectModel = mongoose.model('projects', ProjectSchema);
-  
-// Route to create a project
+    res.status(200).json({ message: "Signup successful" });
+  } catch (error) {
+    console.error("Signup error:", error);
+    res.status(500).json({ message: "Error creating user", error });
+  }
+});
+
+// Create a project
 app.post("/CreateProject", async (req, res) => {
-  const { title, description, category, tags,owner,requirements } = req.body;
+  const { title, description, category, tags, requirements,owner } = req.body;
+console.log("Owner received:", owner);
 
   try {
     const newProject = new ProjectModel({
@@ -194,68 +164,163 @@ app.post("/CreateProject", async (req, res) => {
       description,
       category,
       tags,
-      owner,
       requirements,
+      owner
+      
     });
     await newProject.save();
-    res.status(200).json({ message: "Project created successfully!", project: newProject });
+
+    res.status(200).json({ message: "Project created", project: newProject });
   } catch (error) {
-    console.error("Error creating project:", error);
-    res.status(500).json({ message: "Error creating project" });
+    console.error("Create project error:", error);
+    res.status(500).json({ message: "Error creating project", error });
   }
 });
 
-// Route to fetch all projects
+// Get all projects
 app.get("/getProjects", async (req, res) => {
   try {
-    const projects = await ProjectModel.find().populate("owner", "username email");
+    const projects = await ProjectModel.find();
     res.status(200).json(projects);
   } catch (error) {
-    console.error("Error fetching projects:", error);
+    console.error("Get projects error:", error);
     res.status(500).json({ message: "Error fetching projects" });
   }
 });
 
-// Route to fetch a single project by ID
+// Get a specific project
 app.get("/getProject/:id", async (req, res) => {
-  const { id } = req.params;
   try {
-    const project = await ProjectModel.findById(id).populate("owner", "username email");
+    const project = await ProjectModel.findById(req.params.id);
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
     }
+
     res.status(200).json(project);
   } catch (error) {
-    console.error("Error fetching project:", error);
-    res.status(500).json({ message: "Error fetching project" });
+    console.error("Fetch project error:", error);
+    res.status(500).json({ message: "Error fetching project", error });
   }
 });
 
-app.put("/Project/:id", async (req, res) => {
-  const { id } = req.params;
-  const { collaborator } = req.body;
+// Add a project to user's appliedProjects
+app.put('/addProjectToUser/:projectId', async (req, res) => {
+  const { projectId } = req.params;
+  const { username } = req.body;
+ 
+
 
   try {
-      const updatedProject = await ProjectModel.findByIdAndUpdate(
-          id,
-          { $push: { collaborators: collaborator } },
-          { new: true }
-      );
+    console.log("Username:", username);
+    console.log("Project ID:", projectId);
+    const user = await UserModel.findOne({ username });
+    const project = await ProjectModel.findById(projectId);
+    
 
-      if (!updatedProject) {
-          return res.status(404).json({ message: 'Project not found' });
-      }
+    if (!user || !project) {
+      return res.status(404).json({ message: "User or project not found" });
+    }
 
-      res.status(200).json({ message: 'Collaborator added successfully', updatedProject });
-  } catch (error) {
-      res.status(500).json({ message: 'Error updating project', error });
+    // Prevent duplicate application
+    if (user.appliedProjects.includes(projectId)) {
+      return res.status(400).json({ message: "Already applied to this project" });
+    }
+
+    user.appliedProjects.push(projectId);
+    await user.save();
+
+    res.status(200).json({ message: "Project added to user's appliedProjects" });
+  } catch (err) {
+    console.error("Error in /addProjectToUser:", err);
+    res.status(500).json({ message: "Server error", error: err });
   }
 });
 
 
 
+
+
+// Get applied projects of a user
+app.get("/getAppliedProjects/:username", async (req, res) => {
+  try {
+    const user = await UserModel.findOne({ username: req.params.username }).populate("appliedProjects");
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.status(200).json(user.appliedProjects);
+  } catch (error) {
+    console.error("Applied projects fetch error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Get projects by user and status
+app.get("/getUserProjectsByStatus/:username/:status", async (req, res) => {
+  const { username, status } = req.params;
+  const validStatuses = ["appliedProjects", "inProgressProjects", "completedProjects"];
+
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({ message: "Invalid project status" });
+  }
+
+  try {
+    const user = await UserModel.findOne({ username }).populate(status);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.status(200).json(user[status]);
+  } catch (error) {
+    console.error("Fetch projects by status error:", error);
+    res.status(500).json({ message: "Error fetching projects" });
+  }
+});// Get applicants for projects created by the current user
+app.get("/getApplicantsForMyProjects/:username", async (req, res) => {
+  const { username } = req.params;
+
+  try {
+    // Βρες projects που ανήκουν στον χρήστη
+    const projects = await ProjectModel.find({ owner: username }).populate("othersApplied", "fullName username");
+
+    // Μορφοποίηση των αποτελεσμάτων για επιστροφή
+    const result = projects.map(project => ({
+      projectId: project._id,
+      title: project.title,
+      applicants: project.othersApplied.map(user => ({
+        username: user.username,
+        fullName: user.fullName
+      }))
+    }));
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error fetching applicants:", error);
+    res.status(500).json({ message: "Failed to fetch applicants", error });
+  }
+});
+
+
+// Update project status (move project to a user’s applied/inProgress/completed)
+app.put("/updateProjectStatus/:username", async (req, res) => {
+  const { username } = req.params;
+  const { projectId, status } = req.body;
+  const validStatuses = ["appliedProjects", "inProgressProjects", "completedProjects"];
+
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({ message: "Invalid status type" });
+  }
+
+  try {
+    const update = { $addToSet: { [status]: projectId } };
+    const user = await UserModel.findOneAndUpdate({ username }, update, { new: true }).populate(status);
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.status(200).json({ message: `Project added to ${status}`, user });
+  } catch (error) {
+    console.error("Update status error:", error);
+    res.status(500).json({ message: "Error updating project status", error });
+  }
+});
 
 // Start the server
 app.listen(3001, () => {
-  console.log("Server is running on http://localhost:3001");
+  console.log("🚀 Server is running at http://localhost:3001");
 });

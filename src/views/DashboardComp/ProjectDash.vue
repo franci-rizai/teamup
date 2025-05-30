@@ -1,127 +1,141 @@
 <template>
-    <div class="template">
-      <div class="upper-title">
-        <h1>Projects</h1>
-        <button class="add">Find Projects</button>
+  <div class="dashboard">
+    <h1>{{ username }}'s Projects</h1>
+
+    <div v-if="loading">Loading...</div>
+    <div v-else-if="error">{{ error }}</div>
+    <div v-else>
+      <div class="board">
+        <!-- Applied Projects -->
+        <div class="column">
+          <h2>Applied</h2>
+          <div v-if="appliedProjects.length === 0">No applied projects.</div>
+          <div v-for="project in appliedProjects" :key="project._id" class="card">
+            <p><strong>Project Name:</strong> {{ project.title }}</p>
+            <p><strong>Applied:</strong> waiting...</p>
+            <p><strong>Category:</strong> {{ project.category }}</p>
+            <button @click="withdrawApplication(project._id)">Withdraw</button>
+
+          </div>
+        </div>
+
+        <!-- In Progress Projects -->
+        <div class="column">
+          <h2>In Progress</h2>
+          <div v-if="inProgressProjects.length === 0">No in-progress projects.</div>
+          <div v-for="project in inProgressProjects" :key="project._id" class="card">
+            <p><strong>Project Name:</strong> {{ project.title }}</p>
+            <p><strong>Status:</strong> In Progress</p>
+            <p><strong>Category:</strong> {{ project.category }}</p>
+          </div>
+        </div>
+
+        <!-- Completed Projects -->
+        <div class="column">
+          <h2>Completed</h2>
+          <div v-if="completedProjects.length === 0">No completed projects.</div>
+          <div v-for="project in completedProjects" :key="project._id" class="card">
+            <p><strong>Project Name:</strong> {{ project.title }}</p>
+            <p><strong>Status:</strong> Completed</p>
+            <p><strong>Category:</strong> {{ project.category }}</p>
+          </div>
+        </div>
       </div>
-      <div class="filter">
-        <button>Filter</button>
-      </div>
-      <table class="product-table">
-        <thead>
-          <tr>
-            <th>Project Name</th>
-            <th>Category</th>
-            <th>Status</th>
-            <th>Collaborators</th>
-            <th>Owner</th>
-            <th>Estimated Finish Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(product, index) in products" :key="index">
-            <td>{{ product.item }}</td>
-            <td>{{ product.category }}</td>
-            <td :class="product.status === 'Active' ? 'status-active' : 'status-disabled'">
-              {{ product.status }}
-            </td>
-            <td>{{ product.sales }}</td>
-            <td>{{ product.stock }}</td>
-            <td>${{ product.price }}</td>
-          </tr>
-        </tbody>
-      </table>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        products: [
-          { item: "Ocean", category: "Furniture", status: "Active", sales: 11, stock: 36, price: 560 },
-          { item: "Lou", category: "Kitchen", status: "Disabled", sales: 6, stock: 46, price: 710 },
-          { item: "Yellow", category: "Decoration", status: "Active", sales: 61, stock: 56, price: 360 },
-          { item: "Dreamy", category: "Bedroom", status: "Disabled", sales: 41, stock: 66, price: 260 },
-          { item: "Boheme", category: "Furniture", status: "Active", sales: 32, stock: 40, price: 350 },
-          { item: "Sky", category: "Bathroom", status: "Disabled", sales: 22, stock: 44, price: 160 },
-          { item: "Midnight", category: "Furniture", status: "Active", sales: 23, stock: 45, price: 340 },
-          { item: "Palm", category: "Decoration", status: "Active", sales: 24, stock: 46, price: 60 },
-          { item: "Forest", category: "Living Room", status: "Active", sales: 41, stock: 16, price: 270 },
-          { item: "Sand", category: "Living Room", status: "Disabled", sales: 52, stock: 16, price: 230 },
-          { item: "Autumn", category: "Decoration", status: "Active", sales: 21, stock: 46, price: 252 },
-        ],
-      };
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+
+export default {
+  name: 'ProjectDash',
+  data() {
+    return {
+      username: localStorage.getItem("authToken"), // Default username for testing
+      appliedProjects: [],
+      inProgressProjects: [],
+      completedProjects: [],
+      loading: false,
+      error: null,
+    };
+  },
+  methods: {
+    async fetchProjects() {
+      this.loading = true;
+      this.error = null;
+      try {
+        const response = await axios.get(`http://localhost:3001/getAppliedProjects/${this.username}`);
+        console.log("API Response:", response.data);
+
+        // Assuming the response is just an array of applied projects
+        this.appliedProjects = response.data;
+
+        // Optional: reset others to empty if your backend doesn’t return them yet
+        this.inProgressProjects = [];
+        this.completedProjects = [];
+      } catch (err) {
+        console.error("Error fetching projects:", err);
+        this.error = "Failed to load projects.";
+      } finally {
+        this.loading = false;
+      }
     },
-  };
-  </script>
-  
-  <style scoped>
-  .template {
-  
-    border: 20px solid transparent;
-    display: flex;
-    flex-direction: column;
+    async withdrawApplication(projectId) {
+  try {
+    const response = await axios.post("http://localhost:3001/withdraw", {
+      username: this.username,
+      projectId,
+    });
+    console.log("Withdraw success:", response.data.message);
+    this.fetchProjects(); // Refresh the list
+  } catch (err) {
+    console.error("Error withdrawing application:", err);
   }
-
-  .add{
-    background-color: rgb(110, 110, 255);
-    border: none;
-    color:white;
-    font-size: 18px;
-    padding: 5px;
-    border-radius: 5px;
-  }
-  
-  .upper-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
- 
-  }
-
-  .filter{
-    margin-left: auto;
-    margin-bottom: 10px;
+}
 
 
 
-  }
+  },
+  mounted() {
+    this.fetchProjects();
+  },
+};
+</script>
 
-  .filter button{
-    background-color: bisque;
-    border: none;
-    border-radius: 10px;
-    color: black;
-    padding: 5px;
-    font-size: 17px;
-
-  }
-  
-
-  
-  .product-table {
-   
-    border-collapse: collapse;
-  }
-  
-  .product-table th,
-  .product-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  
-  .product-table th {
-    background-color: #f4f4f4;
-  }
-  
-  .status-active {
-    color: green;
-  }
-  
-  .status-disabled {
-    color: red;
-  }
-  </style>
-  
+<style scoped>
+.dashboard {
+  padding: 20px;
+}
+.board {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+.column {
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+.card {
+  background: white;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+button {
+  background-color: #ff4d4d;
+  border: none;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+button:hover {
+  background-color: #ff1a1a;
+}
+</style>

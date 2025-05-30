@@ -1,172 +1,180 @@
 <template>
-  <div>
-    <div class="info-skills">
+  <div class="dashboard">
+    <!-- User Info -->
+    <section class="user-info">
+      <img src="@/assets/avatar.png" alt="Avatar" />
+      <div>
+        <h2>{{ user.name }}</h2>
+        <p>{{ user.email }}</p>
+        <small>{{ user.role }}</small>
+      </div>
+    </section>
 
-  
-<div class="Info">
-<img src="@/assets/avatar.png" alt="avatar">
-<div class="name-level">
-    <h3>Franci Rizaj</h3>
-   
-</div>
-<p>★</p>
-</div>
-<div class="skills">
-    <p>Deliver on time ----100%</p>
-    <p>Communication Skills ----100%</p>
-    <p>Team Spirit ----100%</p>
-    <p>Creativity ----100%</p>
-</div>
-</div>
+    <!-- Stats -->
+    <section class="stats">
+      <div class="stat-box" v-for="s in stats" :key="s.label">
+        <h3>{{ s.value }}</h3>
+        <p>{{ s.label }}</p>
+      </div>
+    </section>
 
+    <!-- Skills -->
+    <section class="skills">
+      <h3>My Skills</h3>
+      <div v-for="skill in user.skills" :key="skill.name" class="skill-bar">
+        <label>{{ skill.name }}</label>
+        <div class="bar">
+          <div class="fill" :style="{ width: skill.level + '%' }"></div>
+        </div>
+      </div>
+    </section>
 
-<div class="performance-dash">
-<h1>Performance Overview</h1>
-<div class="performance-info">
-<div class="track">
-    <img src="@/assets/completed-task.png">
-    <div class="num-type">
-    <h1>13</h1>
-    <p>Total Collaborators Worked With:</p>
-</div>
-</div>
-<div class="track">
-    <img src="@/assets/completed-task.png">
-    <div class="num-type">
-    <h1>2</h1>
-    <p>Projects Completed</p>
-</div>
-</div>
-<div class="track">
-    <img src="@/assets/completed-task.png">
-    <div class="num-type">
-    <h1>17</h1>
-    <p>Total Projects Applied </p>
-    </div>
-</div>
-
-</div>
-</div>
-</div>
-  
+    <!-- Applicants -->
+    <section class="applicants">
+      <h2>Applicants for My Projects</h2>
+      <div v-if="applicantsList.length > 0">
+        <div v-for="project in applicantsList" :key="project.projectId" class="project-applicants">
+          <h3>{{ project.title }}</h3>
+          <ul>
+            <li v-for="applicant in project.applicants" :key="applicant.username">
+              {{ applicant.fullName }} - {{ applicant.username }}
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div v-else>
+        <p>No applicants yet.</p>
+      </div>
+    </section>
+  </div>
 </template>
 
 <script>
 export default {
-
-}
+  data() {
+    return {
+      applicantsList: [],
+      username: 'frantzi', // Default fallback for now
+      user: {
+        name: "Frantzi Rizai",
+        email: "frantzi@example.com",
+        role: "Team Leader",
+        skills: [
+          { name: "Vue.js", level: 85 },
+          { name: "JavaScript", level: 90 },
+          { name: "HTML/CSS", level: 95 }
+        ]
+      },
+      stats: [
+        { label: "Projects Created", value: 5 },
+        { label: "Applications Received", value: 12 },
+        { label: "Projects In Progress", value: 2 }
+      ]
+    };
+  },
+  mounted() {
+    const currentUsername = this.username;
+    fetch(`http://localhost:3001/getApplicantsForMyProjects/${currentUsername}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("API Response:", data);
+        this.applicantsList = data;
+      })
+      .catch((error) => {
+        console.error("Error fetching applicants:", error);
+      });
+  }
+};
 </script>
 
 <style scoped>
-
-img{
-    width: 30px;
-    height: 40px;
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: sans-serif;
+  padding: 2em;
 }
 
-.Info{
-    display: flex;
-    width: 180px;
-   border-right: 1px solid gray;
-   height: 40px;
-
-  
-    
-    
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 1em;
+  margin-bottom: 2em;
 }
 
-.info-skills{
- 
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    background-color: rgb(241, 241, 241);
-    padding: 20px;
-    border-radius: 30px;
-    box-shadow: 2px 2px 10px;
-    
+.user-info img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
 }
 
-.Project{
-    margin: 2em;
-
-    margin-left: 5em;
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    align-items: center;
-    
-width: fit-content;
-  
-
-   
-   
+.stats {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2em;
+  margin-bottom: 2em;
 }
 
-.skills{
-    margin-left: 1em;
-    display: flex;
-    gap:1em
+.stat-box {
+  background: #f5f5f5;
+  padding: 1em 2em;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  min-width: 150px;
 }
 
-
-.performance-info{
-    
-    display: flex;
-    gap: 3em;
-
- 
-
-
+.skills {
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 2em;
 }
 
-.performance-dash{
-   
-    margin-top: 3em;
-    padding: 30px;
-    border-radius: 30px;
-    box-shadow: 2px 2px 10px;
-    display: flex;
-    justify-content: center;
-    align-items: start;
-    gap:3em;
-    flex-direction: column;
-}
-.track  {
-    
-  
-    text-align: center;
-display: flex;
-justify-content: center;
-align-items: center;
-text-align: start;
-gap:1em;
-width: 250px;
-
-height: 160px;
-border-radius: 30px;
-box-shadow: 2px 2px 10px;
-color:black;
-
+.skill-bar {
+  margin-bottom: 1em;
 }
 
-.track img{
-    width: 70px;
-    height: 80px;
-    object-fit: cover;
-}
-
-.track p{
-    color: rgb(175, 174, 174);
-    font-size: 15px;
-}
-
-li.active {
-  background-color: #4caf50; /* Highlight color */
-  color: white;
+.skill-bar label {
+  display: block;
+  margin-bottom: 0.3em;
   font-weight: bold;
 }
 
+.bar {
+  background: #eee;
+  border-radius: 8px;
+  height: 10px;
+  overflow: hidden;
+}
 
+.fill {
+  height: 100%;
+  background-color: #4caf50;
+  transition: width 0.4s ease;
+}
+
+.applicants {
+  width: 100%;
+  max-width: 700px;
+}
+
+.project-applicants {
+  margin-bottom: 1.5em;
+}
+
+.project-applicants h3 {
+  margin-bottom: 0.5em;
+}
+
+.project-applicants ul {
+  padding-left: 1.2em;
+}
+
+.project-applicants li {
+  margin-bottom: 0.3em;
+}
 </style>
