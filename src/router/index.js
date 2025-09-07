@@ -9,10 +9,6 @@ import CreateProject from '@/views/CreateProject.vue'
 import Dashboard from '@/views/DashboardComp/Dashboard.vue'
 import Profile from '@/views/Profile.vue'
 
-
-
-
-
 const routes = [
   {
    path:'/',
@@ -31,38 +27,44 @@ const routes = [
     component: Login
   },
   {
-  path:'/CreateProfile',
+    path:'/CreateProfile',
     name:'CreateProfile',
     component: CreateProfile
   },
   {
     path:'/Profile',
-      name:'Profile',
-      component: Profile
-    },
+    name:'Profile',
+    component: Profile
+  },
+  {
+    path:'/Profile/:username',
+    name:'UserProfile',
+    component: Profile,
+    props: true
+  },
   {
     path:'/Project',
-      name:'Project',
-      component: Project
-    },
-    {
-      path:'/Project/:id',
-        name:'ProjectDetails',
-        component: ProjectDetails,
-        props: true,
-      },
-      {
-        path:'/CreateProject',
-          name:'CreateProject',
-          component: CreateProject,
-          props: true,
-        },
-        {
-          path:'/Dashboard',
-            name:'Dashboard',
-            component: Dashboard,
-            props: true,
-          }
+    name:'Project',
+    component: Project
+  },
+  {
+    path:'/Project/:id',
+    name:'ProjectDetails',
+    component: ProjectDetails,
+    props: true,
+  },
+  {
+    path:'/CreateProject',
+    name:'CreateProject',
+    component: CreateProject,
+    props: true,
+  },
+  {
+    path:'/Dashboard',
+    name:'Dashboard',
+    component: Dashboard,
+    props: true,
+  }
   
 ]
 

@@ -10,7 +10,7 @@
     <li><router-link class="router" to="/Profile">Profile</router-link></li>  
      
       <li><router-link class="router" to="/CreateProject">Create Project</router-link></li>
-     <li  v-if="!isLoggedIn" ><button>Sign up</button></li>
+     <li  v-if="!isLoggedIn" ><button @click="goToSignup">Sign up</button></li>
       <li>
         <button @click="handleButtonClick">{{ SituationLog }}</button>
       </li>
@@ -31,6 +31,13 @@ export default {
     this.isLoggedIn = !!localStorage.getItem('authToken'); // Update based on token presence
     this.updateButtonLabel();
   },
+  watch: {
+    $route() {
+      // Update login status when route changes
+      this.isLoggedIn = !!localStorage.getItem('authToken');
+      this.updateButtonLabel();
+    }
+  },
   methods: {
     updateButtonLabel() {
       this.SituationLog = this.isLoggedIn ? 'Logout' : 'Login';
@@ -46,9 +53,13 @@ export default {
       localStorage.clear();
       this.isLoggedIn = false;
       this.updateButtonLabel();
+      this.$router.push('/login');
     },
     PushToLogin() {
       this.$router.push('/login');
+    },
+    goToSignup() {
+      this.$router.push('/signup');
     },
   },
 };
@@ -56,62 +67,141 @@ export default {
 
 <style scoped>
 .header {
-  padding-left: 5em;
+  padding: 12px 25px;
   margin: auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgb(210, 209, 209);
-  background-color: beige;
-  padding-bottom: 1em;
-}
-.header img {
-  width: 170px;
+  background-color: #2c3e50;
+  border-bottom: 1px solid #455a64;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-.router{
-  text-decoration: none;
-  color:rgb(0, 0, 0);
-  
+.header img {
+  width: 140px;
+  height: auto;
+  filter: brightness(1.1);
 }
+
+.router {
+  text-decoration: none;
+  color: #ecf0f1;
+  font-weight: 500;
+  position: relative;
+  padding: 5px 0;
+}
+
+.router:after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background-color: #e74c3c;
+  transition: width 0.2s ease;
+}
+
+.router:hover:after {
+  width: 100%;
+}
+
+.router-link-active {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+.router-link-active:after {
+  width: 100%;
+}
+
 ul {
   list-style: none;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 2em;
-  padding-right: 5em;
+  gap: 1.2em;
+  padding: 0;
+  margin: 0;
 }
 
-
-ul li{
- 
-  font-family: arial;
-  font-size: 18px;
-  padding: 10px;
-  
-  
+ul li {
+  font-size: 15px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
-ul li:hover{
-  background-color: rgb(167, 240, 167);
-  
-  border-radius: 10px;
-  
-
+ul li:hover {
+  background-color: #34495e;
 }
 
-button{
-background-color: white;
-border: none;
-border-radius: 5px;
-font-size: 20px;
-color:rgb(125, 235, 125);
-font-weight: bold;
-font-style: italic;
-padding: 10px;
+button {
+  background-color: #e74c3c;
+  border: 1px solid #c0392b;
+  border-radius: 4px;
+  font-size: 15px;
+  color: white;
+  font-weight: 600;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
 
-cursor: pointer;
+button:hover {
+  filter: brightness(110%);
+}
+
+button:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    padding: 10px;
+  }
   
+  ul {
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 12px;
+    gap: 0.8em;
+  }
+  
+  .header img {
+    width: 110px;
+  }
+  
+  ul li {
+    font-size: 14px;
+    padding: 5px 8px;
+  }
+  
+  button {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  ul {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  ul li {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .router {
+    display: block;
+    width: 100%;
+  }
 }
 </style>

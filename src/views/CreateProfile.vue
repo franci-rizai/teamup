@@ -1,28 +1,48 @@
 <template>
-    <div>
-      <h1>It's time to edit your profile</h1>
-      <h2>So you get more chances</h2>
-      <form @submit.prevent="saveProfile" class="userData">
-        <!-- Personal Details -->
-        <h2>Personal Details</h2>
-        <div class="PersonalDetails">
-          <div>
-            <label for="fullName"><strong>Full Name:</strong></label>
-            <input v-model="profile.fullName" id="fullName" type="text" placeholder="Enter your full name" required />
-  
-            <label for="dob"><strong>Date of Birth:</strong></label>
-            <input v-model="profile.dob" id="dob" type="date" required />
+  <div class="create-profile-container">
+    <div class="form-header">
+      <h1>Complete Your Profile</h1>
+      <p>Add your details to increase your chances of finding the perfect team</p>
+    </div>
+    
+    <form @submit.prevent="saveProfile" class="profile-form">
+      <!-- Personal Details -->
+      <div class="form-section">
+        <h2 class="section-title">Personal Details</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input 
+              v-model="profile.fullName" 
+              id="fullName" 
+              type="text" 
+              placeholder="Enter your full name" 
+              required 
+            />
           </div>
-          <div>
-            <label for="gender"><strong>Gender:</strong></label>
+          
+          <div class="form-group">
+            <label for="dob">Date of Birth</label>
+            <input 
+              v-model="profile.dob" 
+              id="dob" 
+              type="date" 
+              required 
+            />
+          </div>
+          
+          <div class="form-group">
+            <label for="gender">Gender</label>
             <select v-model="profile.gender" id="gender" required>
               <option value="" disabled>Select your gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
               <option value="Other">Other</option>
             </select>
-  
-            <label for="about"><strong>Tell us about yourself:</strong></label>
+          </div>
+          
+          <div class="form-group full-width">
+            <label for="about">About Me</label>
             <textarea
               v-model="profile.about"
               id="about"
@@ -32,56 +52,81 @@
             ></textarea>
           </div>
         </div>
-  
-        <!-- Contact Information -->
-        <h2>Contact Information</h2>
-        <div class="ContactInfo">
-          <div>
-            <label for="email"><strong>Email:</strong></label>
-            <input v-model="profile.email" id="email" type="email" placeholder="Enter your email" required />
-  
-            <label for="phone"><strong>Phone Number:</strong></label>
-            <input v-model="profile.phone" id="phone" type="tel" placeholder="Enter your phone number" required />
+      </div>
+
+      <!-- Contact Information -->
+      <div class="form-section">
+        <h2 class="section-title">Contact Information</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input 
+              v-model="profile.email" 
+              id="email" 
+              type="email" 
+              placeholder="Enter your email" 
+              required
+            />
           </div>
-          <div>
-            <label for="address"><strong>Address (City, Country):</strong></label>
+          
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input 
+              v-model="profile.phone" 
+              id="phone" 
+              type="tel" 
+              placeholder="Enter your phone number" 
+            />
+          </div>
+          
+          <div class="form-group full-width">
+            <label for="address">Location (City, Country)</label>
             <input
               v-model="profile.address"
               id="address"
               type="text"
               placeholder="Enter your city and country"
-              required
             />
           </div>
         </div>
-  
-        <!-- Professional Details -->
-        <h2>Professional Details</h2>
-        <div class="ProfessionalDetails">
-          <div>
-            <label for="skills"><strong>Skills/Expertise:</strong></label>
+      </div>
+
+      <!-- Professional Details -->
+      <div class="form-section">
+        <h2 class="section-title">Professional Details</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="skills">Skills (comma separated)</label>
             <input
-              v-model="profile.skills"
+              v-model="skillsInput"
               id="skills"
               type="text"
               placeholder="E.g., Web Development, Graphic Design"
-              required
             />
-  
-            <label for="education"><strong>Education:</strong></label>
-            <input v-model="profile.education" id="education" type="text" placeholder="Enter your education" required />
           </div>
-          <div>
-            <label for="experience"><strong>Work Experience:</strong></label>
+          
+          <div class="form-group">
+            <label for="education">Education</label>
+            <input 
+              v-model="profile.education" 
+              id="education" 
+              type="text" 
+              placeholder="Enter your education" 
+            />
+          </div>
+          
+          <div class="form-group full-width">
+            <label for="experience">Work Experience</label>
             <textarea
               v-model="profile.experience"
               id="experience"
               rows="4"
               placeholder="Describe your past work experiences"
-              required
             ></textarea>
-  
-            <label for="portfolio"><strong>Portfolio Links:</strong></label>
+          </div>
+          
+          <div class="form-group full-width">
+            <label for="portfolio">Portfolio/Website URL</label>
             <input
               v-model="profile.portfolio"
               id="portfolio"
@@ -90,142 +135,339 @@
             />
           </div>
         </div>
-  
+      </div>
+
+      <div class="form-actions">
         <button type="submit" class="save-button">Save Profile</button>
-        <p v-if="message" :class="{'success': success, 'error': !success}">{{ message }}</p>
-      </form>
-    </div>
-  </template>
-  
-  <script>
-  import axios from 'axios';
-  
-  export default {
-    data() {
-      return {
-        profile: {
-            username:"",
-          fullName: "",
-          dob: "",
-          gender: "",
-          about: "",
-          
-          phone: "",
-          address: "",
-          skills: "",
-          education: "",
-          experience: "",
-          portfolio: "",
-          lastname:"",
-        },
-        message: "", // Message for success or error feedback
-        success: false, // Determines the message type
-      };
-    },
-    mounted(){
-        this.profile.username = localStorage.getItem('authToken');
-       
-    },
-    methods: {
-    
-      async saveProfile() {
-        try {
-          const response = await axios.post("http://localhost:3001/userInfo", {
-            username: this.profile.username, // Replace with dynamic username if needed
-            fullName: this.profile.fullName,
-    dob: this.profile.dob,
-    gender: this.profile.gender,
-    about: this.profile.about,
-    email: this.profile.email,
-    phone: this.profile.phone,
-    address: this.profile.address,
-    skills: this.profile.skills,
-    education: this.profile.education,
-    experience: this.profile.experience,
-    portfolio: this.profile.portfolio,
-          });
-  
-          if (response.status === 200) {
-            this.message = "Profile updated successfully!";
-            this.success = true;
-          } else {
-            this.message = "Failed to update profile.";
-            this.success = false;
-          }
-        } catch (error) {
-          this.message = "An error occurred while updating the profile.";
-          this.success = false;
-          console.error("Error:", error);
-        }
+      </div>
+      
+      <div v-if="message" :class="{'success-message': success, 'error-message': !success}" class="form-message">
+        {{ message }}
+      </div>
+    </form>
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+import ProfileService from '@/services/ProfileService';
+
+export default {
+  data() {
+    return {
+      profile: {
+        username: "",
+        fullName: "",
+        dob: "",
+        gender: "",
+        about: "",
+        email: "",
+        phone: "",
+        address: "",
+        skills: [],
+        education: "",
+        experience: "",
+        portfolio: "",
       },
-     
+      skillsInput: "",
+      message: "",
+      success: false,
+    };
+  },
+  mounted() {
+    this.profile.username = localStorage.getItem('authToken');
+    this.loadProfileData();
+  },
+  methods: {
+    loadProfileData() {
+      const username = this.profile.username;
+      
+      // Try to get profile from user-specific localStorage key first
+      const userProfileKey = `userProfile_${username}`;
+      const savedUserProfile = localStorage.getItem(userProfileKey);
+      
+      if (savedUserProfile) {
+        try {
+          const profileData = JSON.parse(savedUserProfile);
+          // Copy all fields from saved profile to current profile
+          Object.keys(this.profile).forEach(key => {
+            if (profileData[key] !== undefined) {
+              // Special handling for date field to prevent invalid values
+              if (key === 'dob' && (profileData[key] === '-' || profileData[key] === 'Not provided')) {
+                this.profile[key] = '';
+              } else {
+                this.profile[key] = profileData[key];
+              }
+            }
+          });
+          
+          // Handle skills array specially
+          if (Array.isArray(this.profile.skills)) {
+            this.skillsInput = this.profile.skills.join(', ');
+          }
+          return;
+        } catch (e) {
+          console.error("Error parsing saved user profile:", e);
+        }
+      }
+      
+      // Try general profile localStorage key as fallback
+      const savedProfile = localStorage.getItem('userProfile');
+      if (savedProfile) {
+        try {
+          const profileData = JSON.parse(savedProfile);
+          // Copy all fields from saved profile to current profile
+          Object.keys(this.profile).forEach(key => {
+            if (profileData[key] !== undefined) {
+              // Special handling for date field to prevent invalid values
+              if (key === 'dob' && (profileData[key] === '-' || profileData[key] === 'Not provided')) {
+                this.profile[key] = '';
+              } else {
+                this.profile[key] = profileData[key];
+              }
+            }
+          });
+          
+          // Handle skills array specially
+          if (Array.isArray(this.profile.skills)) {
+            this.skillsInput = this.profile.skills.join(', ');
+          }
+          return;
+        } catch (e) {
+          console.error("Error parsing saved profile:", e);
+        }
+      }
+      
+      // If no localStorage data, leave fields blank with dashes
+      this.setBlankProfile();
     },
-  };
-  </script>
+    
+
+    
+    setBlankProfile() {
+      // Set all fields to blank or dash for display, except date field
+      this.profile.fullName = this.profile.fullName || "";
+      this.profile.about = this.profile.about || "";
+      this.profile.phone = this.profile.phone || "";
+      this.profile.address = this.profile.address || "";
+      this.profile.education = this.profile.education || "";
+      this.profile.experience = this.profile.experience || "";
+      this.profile.portfolio = this.profile.portfolio || "";
+      this.profile.dob = this.profile.dob || "";
+      this.skillsInput = "";
+    },
+    
+
+    
+    async saveProfile() {
+      try {
+        // Convert skills input to array
+        if (this.skillsInput) {
+          this.profile.skills = this.skillsInput.split(',').map(skill => skill.trim()).filter(skill => skill);
+        }
+        
+        console.log('Saving profile data:', this.profile);
+        
+        // Save profile using ProfileService
+        await ProfileService.updateProfile(this.profile);
+        
+
+        
+        this.message = "Profile updated successfully!";
+        this.success = true;
+        
+        // Redirect to profile page after a short delay
+        setTimeout(() => {
+          this.$router.push('/profile');
+        }, 1500);
+      } catch (error) {
+        this.message = `Error: ${error.message || 'Failed to update profile'}`;
+        this.success = false;
+        console.error("Error updating profile:", error);
+      }
+    },
+  },
+};
+</script>
+
+<style scoped>
+.create-profile-container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.form-header h1 {
+  color: #e74c3c;
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.form-header p {
+  color: #bdc3c7;
+  font-size: 1.1rem;
+}
+
+.profile-form {
+  background-color: #2c3e50;
+  border-radius: 8px;
+  border: 1px solid #455a64;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  padding: 30px;
+}
+
+.form-section {
+  margin-bottom: 30px;
+}
+
+.section-title {
+  color: #ecf0f1;
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #455a64;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.form-group {
+  margin-bottom: 5px;
+}
+
+.full-width {
+  grid-column: span 2;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  color: #ecf0f1;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 12px;
+  background-color: #34495e;
+  border: 1px solid #455a64;
+  border-radius: 4px;
+  color: #ecf0f1;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #e74c3c;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-actions {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.save-button {
+  background-color: #e74c3c;
+  color: white;
+  border: 1px solid #c0392b;
+  padding: 12px 30px;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.save-button:hover {
+  filter: brightness(110%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.save-button:active {
+  transform: translateY(0);
+}
+
+.form-message {
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.success-message {
+  background-color: rgba(46, 204, 113, 0.2);
+  color: #2ecc71;
+  border: 1px solid #27ae60;
+}
+
+.error-message {
+  background-color: rgba(231, 76, 60, 0.2);
+  color: #e74c3c;
+  border: 1px solid #c0392b;
+}
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
   
-  <style scoped>
-  /* General Styling */
-  .userData {
-    max-width: 800px;
-    margin: 0 auto;
+  .full-width {
+    grid-column: span 1;
+  }
+  
+  .profile-form {
     padding: 20px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@media (max-width: 480px) {
+  .create-profile-container {
+    margin: 15px auto;
   }
   
-  h1,
-  h2 {
-    text-align: center;
-    color: #007bff;
+  .form-header h1 {
+    font-size: 1.6rem;
   }
   
-  label {
-    display: block;
-    margin-top: 10px;
-    font-weight: bold;
-    color: #333;
+  .form-header p {
+    font-size: 1rem;
   }
   
-  input,
-  select,
-  textarea {
-    width: 100%;
+  .section-title {
+    font-size: 1.2rem;
+  }
+  
+  .profile-form {
+    padding: 15px;
+  }
+  
+  input, select, textarea {
     padding: 10px;
-    margin: 5px 0 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-  }
-  
-  textarea {
-    resize: none;
+    font-size: 0.9rem;
   }
   
   .save-button {
-    display: block;
     width: 100%;
     padding: 10px;
-    font-size: 16px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    font-size: 1rem;
   }
-  
-  .save-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .success {
-    color: green;
-    text-align: center;
-  }
-  
-  .error {
-    color: red;
-    text-align: center;
-  }
-  </style>
-  
+}
+</style>
