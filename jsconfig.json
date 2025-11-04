@@ -1,9 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2020",
     "module": "esnext",
     "baseUrl": "./",
     "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noEmit": true,
     "paths": {
       "@/*": [
         "src/*"
@@ -12,8 +16,24 @@
     "lib": [
       "esnext",
       "dom",
-      "dom.iterable",
-      "scripthost"
-    ]
-  }
+      "dom.iterable"
+    ],
+    "types": []
+  },
+  "include": [
+    "src/**/*.js",
+    "src/**/*.vue",
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "public",
+    "server.js",
+    "routes",
+    "models",
+    "config",
+    "**/*.spec.js",
+    "**/*.test.js"
+  ]
 }

@@ -5,8 +5,8 @@ const MessageService = {
   // Get messages for a project
   async getMessages(projectId) {
     try {
-      const response = await axios.get(`http://localhost:3001/getForumMessages/${projectId}`);
-      return response.data;
+      const response = await axios.get(`http://localhost:3001/getProject/${projectId}`);
+      return response.data.forumMessages || [];
     } catch (error) {
       console.error("Error fetching messages:", error);
       return [];
