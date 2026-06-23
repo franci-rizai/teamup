@@ -179,71 +179,28 @@ export default {
     this.loadProfileData();
   },
   methods: {
-    loadProfileData() {
+    async loadProfileData() {
       const username = this.profile.username;
-      
-      // Try to get profile from user-specific localStorage key first
-      const userProfileKey = `userProfile_${username}`;
-      const savedUserProfile = localStorage.getItem(userProfileKey);
-      
-      if (savedUserProfile) {
-        try {
-          const profileData = JSON.parse(savedUserProfile);
-          // Copy all fields from saved profile to current profile
-          Object.keys(this.profile).forEach(key => {
-            if (profileData[key] !== undefined) {
-              // Special handling for date field to prevent invalid values
-              if (key === 'dob' && (profileData[key] === '-' || profileData[key] === 'Not provided')) {
-                this.profile[key] = '';
-              } else {
-                this.profile[key] = profileData[key];
-              }
-            }
-          });
-          
-          // Handle skills array specially
-          if (Array.isArray(this.profile.skills)) {
-            this.skillsInput = this.profile.skills.join(', ');
-          }
-          return;
-        } catch (e) {
-          console.error("Error parsing saved user profile:", e);
-        }
-      }
-      
-      // Try general profile localStorage key as fallback
-      const savedProfile = localStorage.getItem('userProfile');
-      if (savedProfile) {
-        try {
-          const profileData = JSON.parse(savedProfile);
-          // Copy all fields from saved profile to current profile
-          Object.keys(this.profile).forEach(key => {
-            if (profileData[key] !== undefined) {
-              // Special handling for date field to prevent invalid values
-              if (key === 'dob' && (profileData[key] === '-' || profileData[key] === 'Not provided')) {
-                this.profile[key] = '';
-              } else {
-                this.profile[key] = profileData[key];
-              }
-            }
-          });
-          
-          // Handle skills array specially
-          if (Array.isArray(this.profile.skills)) {
-            this.skillsInput = this.profile.skills.join(', ');
-          }
-          return;
-        } catch (e) {
-          console.error("Error parsing saved profile:", e);
-        }
-      }
-      
-      // If no localStorage data, leave fields blank with dashes
-      this.setBlankProfile();
-    },
-    
+      if (!username) return;
 
-    
+      try {
+        const response = await import('axios').then(m => m.default.get(`http://localhost:3001/users/${username}`));
+        const data = response.data;
+
+        Object.keys(this.profile).forEach(key => {
+          if (data[key] !== undefined && data[key] !== '-') {
+            this.profile[key] = data[key];
+          }
+        });
+
+        if (Array.isArray(this.profile.skills)) {
+          this.skillsInput = this.profile.skills.join(', ');
+        }
+      } catch (e) {
+        console.error('Error loading profile data:', e);
+      }
+    },
+
     setBlankProfile() {
       // Set all fields to blank or dash for display, except date field
       this.profile.fullName = this.profile.fullName || "";
@@ -269,7 +226,7 @@ export default {
         console.log('Saving profile data:', this.profile);
         
         // Save profile using ProfileService
-        await ProfileService.updateProfile(this.profile);
+        await ProfileService.updateProfile(this.profile.username, this.profile);
         
 
         

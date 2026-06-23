@@ -108,7 +108,7 @@ export default {
       
       try {
         // Get real user data from database
-        const userResponse = await axios.get(`http://localhost:3001/userInfo/${username}`);
+        const userResponse = await axios.get(`http://localhost:3001/users/${username}`);
         const userData = userResponse.data;
         
         // Set user info with real data

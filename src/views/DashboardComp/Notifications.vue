@@ -118,7 +118,7 @@ export default {
         localStorage.removeItem(`userProfile_${username}`);
         
         // Try to fetch fresh profile data from the database
-        const response = await axios.get(`http://localhost:3001/userInfo/${username}`);
+        const response = await axios.get(`http://localhost:3001/users/${username}`);
         
         if (response.data) {
           // Store the fresh profile data in localStorage

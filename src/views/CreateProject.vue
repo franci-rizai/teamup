@@ -75,6 +75,27 @@
               placeholder="E.g., React, MongoDB, UI/UX, Machine Learning"
             />
           </div>
+
+          <div class="form-group">
+            <label for="teamSize">Team Size</label>
+            <select v-model="project.teamSize" id="teamSize" required>
+              <option value="" disabled>Select team size</option>
+              <option value="solo">Solo</option>
+              <option value="small">Small (2-3 People)</option>
+              <option value="medium">Medium (4-6 People)</option>
+              <option value="large">Large (7+ People)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="duration">Duration</label>
+            <select v-model="project.duration" id="duration" required>
+              <option value="" disabled>Select duration</option>
+              <option value="short">Short-term</option>
+              <option value="medium">Medium-term</option>
+              <option value="long">Long-term</option>
+            </select>
+          </div>
         </div>
       </div>
       
@@ -148,7 +169,7 @@
           </div>
           
           <div class="form-group full-width">
-            <label for="requirements">Skills Required (one per line)</label>
+            <label for="requirements">Soft Skills Required (one per line)</label>
             <textarea
               v-model="requirementsInput"
               id="requirements"
@@ -183,6 +204,8 @@ export default {
         tags: [],
         requirements: [],
         roles: [],
+        teamSize: "",
+        duration: "",
         owner: localStorage.getItem("authToken") || "guest"
       },
       projectRoles: [

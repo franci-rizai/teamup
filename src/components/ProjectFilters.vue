@@ -375,7 +375,6 @@ export default {
           this.filters.roles = this.filters.roles.filter(r => 
             this.roleOptions.find(opt => opt.value === r)?.label !== value);
           break;
-
       }
       
       this.applyFilters();

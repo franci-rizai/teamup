@@ -267,6 +267,46 @@ router.post('/rejectApplicant', async (req, res) => {
   }
 });
 
+// Get applicants for all projects owned by a user
+router.get('/getApplicantsForMyProjects/:username', async (req, res) => {
+  try {
+    const projects = await Project.find({ owner: req.params.username }).populate('othersApplied', 'username fullName');
+
+    const result = projects.map(project => ({
+      projectId: project._id,
+      title: project.title,
+      applicants: project.othersApplied || []
+    }));
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Error fetching applicants:', error);
+    res.status(500).json({ message: 'Failed to fetch applicants', error });
+  }
+});
+
+// Delete project
+router.delete('/deleteProject/:projectId', async (req, res) => {
+  const { projectId } = req.params;
+
+  try {
+    const project = await Project.findById(projectId);
+    if (!project) return res.status(404).json({ message: 'Project not found' });
+
+    // Remove project from all users' arrays
+    await User.updateMany(
+      {},
+      { $pull: { inProgressProjects: project._id, appliedProjects: project._id, savedProjects: project._id } }
+    );
+
+    await Project.findByIdAndDelete(projectId);
+    res.status(200).json({ message: 'Project deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting project:', error);
+    res.status(500).json({ message: 'Error deleting project', error });
+  }
+});
+
 // Add forum message
 router.post('/addForumMessage', async (req, res) => {
   const { projectId, author, text } = req.body;

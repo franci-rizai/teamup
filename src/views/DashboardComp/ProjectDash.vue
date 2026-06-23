@@ -122,16 +122,13 @@ export default {
     
     async fetchAppliedProjects() {
       try {
-        // For now, we'll just show an empty list since we can't reliably get applied projects
-        this.appliedProjects = [];
-        
-        // Try to get from localStorage if available
-        const appliedProjectsStr = localStorage.getItem('appliedProjects');
-        if (appliedProjectsStr) {
-          try {
-            this.appliedProjects = JSON.parse(appliedProjectsStr);
-          } catch (e) {}
-        }
+        const response = await axios.get(`http://localhost:3001/users/${this.username}`);
+        const appliedIds = response.data.appliedProjects || [];
+
+        const projects = await Promise.all(
+          appliedIds.map(id => axios.get(`http://localhost:3001/getProject/${id}`).then(r => r.data).catch(() => null))
+        );
+        this.appliedProjects = projects.filter(p => p !== null);
       } catch (error) {
         console.error("Error fetching applied projects:", error);
         this.appliedProjects = [];
